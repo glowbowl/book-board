@@ -16,10 +16,15 @@
 </div>
 
 <div class="books-board" *ngIf="filteredBooks.length; else noBooksPlaceholder">
-  <div *ngFor="let book of filteredBooks" class="book-card" (click)="openBookDialog(book)">
-    <button class="delete-button" mat-icon-button (click)="deleteBook(book.id, $event)">
-      <mat-icon>close</mat-icon>
-    </button>
+  <div *ngFor="let book of filteredBooks" class="book-card" (click)="openBookDialog(book, true)">
+    <div class="button-group">
+      <button class="edit-button" mat-icon-button (click)="openBookDialog(book); $event.stopPropagation()">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button class="delete-button" mat-icon-button (click)="deleteBook(book.id, $event)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
 
     <div class="book-card-image-wrapper">
       <img *ngIf="book?.image; else imagePlaceholder" [src]="book.image" alt="{{ book.name }}" class="book-card-image" />
@@ -34,7 +39,7 @@
       <div *ngIf="book?.createdAt" class="book-card-date">
         <mat-icon>date_range</mat-icon> {{ book.createdAt }}
       </div>
-      <div class="book-card-continue" (click)="$event.stopPropagation();">
+      <div class="book-card-continue" (click)="openBookDialog(book, true); $event.stopPropagation()">
         <mat-icon>arrow_forward</mat-icon> Full info
       </div>
     </div>

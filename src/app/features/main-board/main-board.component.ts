@@ -3,13 +3,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IBook } from '../../shared/interfaces/api.interfaces';
 import { BookApiService } from '../../shared/services/book-api.service';
-import { debounceTime, take } from 'rxjs';
+import { debounceTime, Subject, take, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,10 +36,12 @@ import { BookDialogComponent } from '../book-dialog/book-dialog.component';
   styleUrl: './main-board.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainBoardComponent implements OnInit {
+export class MainBoardComponent implements OnInit, OnDestroy {
   public books: IBook[] = [];
   public filteredBooks: IBook[] = [];
   public searchTerm = new FormControl<string | null>(null);
+
+  readonly ngUnsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
     private api: BookApiService,
@@ -50,20 +53,26 @@ export class MainBoardComponent implements OnInit {
     this.initSubs();
   }
 
+  public ngOnDestroy(): void {
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
+  }
+
   public clearSearch(): void {
     this.searchTerm.reset();
   }
 
-  public openBookDialog(book?: IBook): void {
+  public openBookDialog(book?: IBook, viewMode: boolean = false): void {
     const dialogRef = this.dialog.open(BookDialogComponent, {
       width: '500px',
-      data: book,
+      data: { book: book, viewMode: viewMode },
+      autoFocus: false,
     });
 
     dialogRef.afterClosed().subscribe((result: IBook) => {
       if (result) {
         if (book) {
-          this.updateBook(book.id, result);
+          this.updateBook(result);
         } else {
           this.addBook(result);
         }
@@ -73,30 +82,21 @@ export class MainBoardComponent implements OnInit {
 
   public deleteBook(bookId: number, event: Event): void {
     event.stopPropagation();
-    this.books = this.books.filter((book) => book.id !== bookId);
-    this.filterBooks();
-    this.cdr.markForCheck();
+    this.api.deleteBook(bookId);
   }
 
   private addBook(newBook: IBook): void {
-    this.books.push(newBook);
-    this.filterBooks();
-    this.cdr.markForCheck();
+    this.api.addBook(newBook);
   }
 
-  private updateBook(id: number, updatedBook: IBook): void {
-    const index = this.books.findIndex((b) => b.id === id);
-    if (index !== -1) {
-      this.books[index] = { ...updatedBook, id };
-      this.filterBooks();
-      this.cdr.markForCheck();
-    }
+  private updateBook(updatedBook: IBook): void {
+    this.api.updateBook(updatedBook);
   }
 
   private initSubs(): void {
     this.api
-      .getArticles()
-      .pipe(take(1))
+      .getBooks()
+      .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((result: IBook[]) => {
         this.books = structuredClone(result);
         this.filteredBooks = structuredClone(result);

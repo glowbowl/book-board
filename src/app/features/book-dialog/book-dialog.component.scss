@@ -13,6 +13,24 @@
       font-size: 1.75rem;
       font-weight: 600;
       text-align: center;
+      position: relative;
+
+      .book-dialog-actions-top {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        gap: 0.5rem;
+
+        button {
+          color: #3f51b5;
+          transition: color 0.2s ease-in-out;
+
+          &:hover {
+            color: #303f9f;
+          }
+        }
+      }
     }
 
     .book-dialog-content {
@@ -31,6 +49,7 @@
 
           textarea {
             resize: vertical;
+            min-height: 100px;
           }
         }
       }

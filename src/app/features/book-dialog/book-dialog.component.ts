@@ -16,6 +16,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { IBook } from '../../shared/interfaces/api.interfaces';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { BookApiService } from '../../shared/services/book-api.service';
 
 @Component({
   selector: 'brd-book-dialog',
@@ -26,6 +28,7 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatIconModule,
   ],
   templateUrl: './book-dialog.component.html',
   styleUrl: './book-dialog.component.scss',
@@ -34,39 +37,73 @@ import { MatInputModule } from '@angular/material/input';
 export class BookDialogComponent implements OnInit {
   public bookForm!: FormGroup;
   public isEditMode: boolean;
+  public viewMode: boolean;
   public today = new Date();
 
   constructor(
     private fb: FormBuilder,
+    private api: BookApiService,
     private dialogRef: MatDialogRef<BookDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IBook
+    @Inject(MAT_DIALOG_DATA) public data: { book: IBook; viewMode: boolean }
   ) {
-    this.isEditMode = !!data;
+    this.isEditMode = !!data.book && !data.viewMode;
+    this.viewMode = data.viewMode;
   }
 
   ngOnInit(): void {
     this.bookForm = this.fb.group({
-      name: [this.data?.name || '', Validators.required],
-      author: [this.data?.author || '', Validators.required],
+      name: [
+        { value: this.data.book?.name || '', disabled: this.viewMode },
+        Validators.required,
+      ],
+      author: [
+        { value: this.data.book?.author || '', disabled: this.viewMode },
+        Validators.required,
+      ],
       createdAt: [
-        this.data?.createdAt || '',
+        {
+          value: this.data.book?.createdAt || '',
+          disabled: this.viewMode,
+        },
         [
           Validators.required,
           Validators.min(1000),
           Validators.max(this.today.getFullYear()),
         ],
       ],
-      description: [this.data?.description || ''],
+      description: [
+        { value: this.data.book?.description || '', disabled: this.viewMode },
+      ],
     });
   }
 
+  public toggleEditMode(): void {
+    this.viewMode = false;
+    this.isEditMode = true;
+    this.bookForm.enable();
+  }
+
+  public deleteBook(): void {
+    this.dialogRef.close();
+    this.api.deleteBook(this.data.book.id);
+  }
+
   public save(): void {
-    if (this.bookForm.valid) {
+    if (this.bookForm.valid && this.data.book) {
+      this.dialogRef.close({...this.bookForm.value, id: this.data.book.id});
+    } else {
       this.dialogRef.close(this.bookForm.value);
+
     }
   }
 
   public cancel(): void {
-    this.dialogRef.close();
+    if (this.isEditMode && this.data.viewMode) {
+      this.isEditMode = false;
+      this.viewMode = true;
+      this.bookForm.disable();
+    } else {
+      this.dialogRef.close();
+    }
   }
 }
