@@ -1,0 +1,57 @@
+<div class="top-menu">
+  <mat-form-field appearance="outline">
+    <mat-label>Search</mat-label>
+    <input matInput [formControl]="searchTerm" placeholder="Search by title or author" />
+    <button
+      *ngIf="searchTerm?.value"
+      mat-icon-button
+      matSuffix
+      (click)="clearSearch()"
+      [attr.aria-label]="'Clear search'"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <button mat-stroked-button color="primary" (click)="openBookDialog()">Add Book</button>
+</div>
+
+<div class="books-board" *ngIf="filteredBooks.length; else noBooksPlaceholder">
+  <div *ngFor="let book of filteredBooks" class="book-card" (click)="openBookDialog(book)">
+    <button class="delete-button" mat-icon-button (click)="deleteBook(book.id, $event)">
+      <mat-icon>close</mat-icon>
+    </button>
+
+    <div class="book-card-image-wrapper">
+      <img *ngIf="book?.image; else imagePlaceholder" [src]="book.image" alt="{{ book.name }}" class="book-card-image" />
+    </div>
+    <div class="book-card-content">
+      <div *ngIf="book?.name" class="book-card-title">
+        <mat-icon>book</mat-icon> {{ book.name }}
+      </div>
+      <div *ngIf="book?.author" class="book-card-author">
+        <mat-icon>person</mat-icon> By {{ book.author }}
+      </div>
+      <div *ngIf="book?.createdAt" class="book-card-date">
+        <mat-icon>date_range</mat-icon> {{ book.createdAt }}
+      </div>
+      <div class="book-card-continue" (click)="$event.stopPropagation();">
+        <mat-icon>arrow_forward</mat-icon> Full info
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #imagePlaceholder>
+  <div class="image-placeholder">
+    <span>No Image Available</span>
+  </div>
+</ng-template>
+
+<ng-template #noBooksPlaceholder>
+  <div class="book-board-placeholder">
+    <div *ngIf="!filteredBooks.length && books.length" class="book-board-placeholder-text">
+      There are no books.
+    </div>
+    <mat-spinner *ngIf="!books.length"></mat-spinner>
+  </div>
+</ng-template>

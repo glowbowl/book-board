@@ -1,0 +1,126 @@
+:host {
+  .top-menu {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 1rem;
+
+    mat-form-field {
+      flex: 1;
+      margin: 0 1rem;
+    }
+  }
+
+  .books-board {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: flex-start;
+
+    .book-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 300px;
+      transition: box-shadow 0.3s ease-in-out;
+      text-align: center;
+
+      &:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .delete-button {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(255, 255, 255, 0.8);
+        color: #f44336;
+        border-radius: 50%;
+        transition: background-color 0.3s ease-in-out;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 1);
+        }
+      }
+
+      .book-card-image-wrapper {
+        width: 100%;
+        height: 180px;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .book-card-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .image-placeholder {
+          font-size: 0.9rem;
+          color: #888;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          background-color: #f0f0f0;
+          font-style: italic;
+        }
+      }
+
+      .book-card-content {
+        padding: 1rem;
+        text-align: left;
+
+        .mat-icon {
+          vertical-align: middle;
+          margin-right: 0.5rem;
+        }
+
+        .book-card-title,
+        .book-card-author,
+        .book-card-date,
+        .book-card-continue {
+          margin-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+
+          .mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+
+        .book-card-continue {
+          color: #007bff;
+          cursor: pointer;
+          text-decoration: underline;
+          margin-top: 1rem;
+          transition: color 0.3s ease-in-out;
+
+          &:hover {
+            color: #0056b3;
+          }
+        }
+      }
+    }
+  }
+
+  .book-board-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    .book-board-placeholder-text {
+      font-size: 1.5rem;
+      color: #777;
+    }
+  }
+}
