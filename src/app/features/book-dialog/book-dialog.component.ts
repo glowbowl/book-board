@@ -55,6 +55,9 @@ export class BookDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.initFormGroup();
+    if (this.isEditMode && this.data.book?.imageUrl) {
+      this.imagePreview = this.data.book.imageUrl;
+    }
   }
 
   public toggleEditMode(): void {

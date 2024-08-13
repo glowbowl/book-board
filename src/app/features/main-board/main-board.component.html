@@ -16,7 +16,7 @@
 </div>
 
 <div class="books-board" *ngIf="filteredBooks.length; else noBooksPlaceholder">
-  <div *ngFor="let book of filteredBooks" class="book-card" (click)="openBookDialog(book, true)">
+  <div *ngFor="let book of filteredBooks; trackBy: trackByBookId" class="book-card" @cardAnimation (click)="openBookDialog(book, true)">
     <div class="button-group">
       <button class="edit-button" mat-icon-button (click)="openBookDialog(book); $event.stopPropagation()">
         <mat-icon>edit</mat-icon>

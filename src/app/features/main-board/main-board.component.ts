@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IBook } from '../../shared/interfaces/api.interfaces';
 import { BookApiService } from '../../shared/services/book-api.service';
-import { debounceTime, Subject, take, takeUntil } from 'rxjs';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { BookDialogComponent } from '../book-dialog/book-dialog.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'brd-main-board',
@@ -35,6 +36,17 @@ import { BookDialogComponent } from '../book-dialog/book-dialog.component';
   templateUrl: './main-board.component.html',
   styleUrl: './main-board.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('cardAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.9)' }),
+        animate('300ms ease-in', style({ opacity: 1, transform: 'scale(1)' })),
+      ]),
+      transition(':leave', [
+        animate('300ms ease-out', style({ opacity: 0, transform: 'scale(0.9)' })),
+      ]),
+    ]),
+  ],
 })
 export class MainBoardComponent implements OnInit, OnDestroy {
   public books: IBook[] = [];
@@ -83,6 +95,10 @@ export class MainBoardComponent implements OnInit, OnDestroy {
   public deleteBook(bookId: number, event: Event): void {
     event.stopPropagation();
     this.api.deleteBook(bookId);
+  }
+
+  public trackByBookId(index: number, book: IBook): number {
+    return book.id;
   }
 
   private addBook(newBook: IBook): void {
