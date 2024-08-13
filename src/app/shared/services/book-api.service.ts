@@ -30,8 +30,6 @@ export class BookApiService {
     const updatedBooks = this.booksSubject$.value.map((book) =>
       book.id === updatedBook.id ? updatedBook : book
     );
-    console.log(updatedBooks, updatedBook);
-
     this.simulateServerResponse(updatedBooks, 'Book updated successfully');
   }
 
@@ -60,7 +58,7 @@ export class BookApiService {
 
   private showSnackBar(message: string): void {
     this.snackBar.open(message, 'Close', {
-      duration: 3000,
+      duration: 2000,
     });
   }
 }

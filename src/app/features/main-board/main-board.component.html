@@ -27,7 +27,7 @@
     </div>
 
     <div class="book-card-image-wrapper">
-      <img *ngIf="book?.image; else imagePlaceholder" [src]="book.image" alt="{{ book.name }}" class="book-card-image" />
+      <img *ngIf="book?.imageUrl; else imagePlaceholder" [src]="book.imageUrl" alt="{{ book.name }}" class="book-card-image" />
     </div>
     <div class="book-card-content">
       <div *ngIf="book?.name" class="book-card-title">

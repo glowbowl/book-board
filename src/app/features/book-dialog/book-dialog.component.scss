@@ -40,16 +40,92 @@
       .book-dialog-form {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
         padding-top: 0.4rem;
 
-        .form-field {
-          width: 100%;
-          font-size: 1rem;
+        .image-and-inputs {
+          display: flex;
+          align-items: flex-start;
+          gap: 20px;
 
-          textarea {
-            resize: vertical;
-            min-height: 100px;
+          .image-upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            height: 180px;
+            margin-left: 0.4rem;
+            position: relative;
+
+            .image-placeholder {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              border: 1px solid #aaa;
+              border-radius: 5px;
+              color: #aaa;
+              font-size: 0.7rem;
+
+              mat-icon {
+                font-size: 2rem;
+                margin-bottom: 5px;
+              }
+            }
+
+            img {
+              width: 100%;
+              height: auto;
+              border-radius: 5px;
+              object-fit: cover;
+              border: 1px solid #ddd;
+            }
+
+            .upload-button {
+              display: inline-block;
+              cursor: pointer;
+              background-color: #3f51b5;
+              color: white;
+              padding: 6px 12px;
+              border-radius: 4px;
+              text-align: center;
+              margin-top: 10px;
+              font-size: 0.7rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background-color 0.1s ease-in-out;
+
+              mat-icon {
+                margin-right: 5px;
+              }
+
+              &:hover {
+                background-color: #303f9f;
+              }
+            }
+
+            input[type="file"] {
+              display: none;
+            }
+          }
+
+          .input-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .form-field {
+              width: 100%;
+              font-size: 1rem;
+
+              textarea {
+                resize: vertical;
+                min-height: 100px;
+              }
+            }
           }
         }
       }

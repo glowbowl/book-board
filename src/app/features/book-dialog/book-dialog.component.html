@@ -13,30 +13,56 @@
 
   <div mat-dialog-content class="book-dialog-content">
     <form [formGroup]="bookForm" class="book-dialog-form">
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Title</mat-label>
-        <input matInput formControlName="name" />
-        <mat-error *ngIf="bookForm.get('name')!.invalid">Title is required</mat-error>
-      </mat-form-field>
+      <div class="image-and-inputs">
+        <div class="image-upload-container">
+          <ng-container *ngIf="!viewMode; else viewImage">
+            <div class="image-placeholder" *ngIf="!imagePreview">
+              <mat-icon>image</mat-icon>
+              <span>No Image Available</span>
+            </div>
+            <img *ngIf="imagePreview" [src]="imagePreview" alt="Book Image" />
+            <label for="fileInput" class="upload-button">
+              <mat-icon>upload</mat-icon>
+              {{ imagePreview ? 'Change Image' : 'Upload Image'}}
+            </label>
+            <input id="fileInput" type="file" accept="image/*" (change)="onImageSelected($event)" />
+          </ng-container>
+          <ng-template #viewImage>
+            <div class="image-placeholder" *ngIf="!this.data.book.imageUrl">
+              <mat-icon>image</mat-icon>
+              <span>No Image Available</span>
+            </div>
+            <img *ngIf="this.data.book?.imageUrl" [src]="this.data.book.imageUrl" alt="Book Image" />
+          </ng-template>
+        </div>
 
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Author</mat-label>
-        <input matInput formControlName="author" />
-        <mat-error *ngIf="bookForm.get('author')!.invalid">Author is required</mat-error>
-      </mat-form-field>
+        <div class="input-fields">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="name" />
+            <mat-error *ngIf="bookForm.get('name')?.invalid">Title is required</mat-error>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Year</mat-label>
-        <input matInput formControlName="createdAt" />
-        <mat-error *ngIf="bookForm.get('createdAt')!.invalid">
-          Year should be between 1000 and {{ today.getFullYear() }}
-        </mat-error>
-      </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Author</mat-label>
+            <input matInput formControlName="author" />
+            <mat-error *ngIf="bookForm.get('author')?.invalid">Author is required</mat-error>
+          </mat-form-field>
 
-      <mat-form-field appearance="outline" class="form-field">
-        <mat-label>Description</mat-label>
-        <textarea matInput [ngStyle]="{'resize': viewMode ? 'none' : 'vertical' }" formControlName="description"></textarea>
-      </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Year</mat-label>
+            <input matInput formControlName="createdAt" />
+            <mat-error *ngIf="bookForm.get('createdAt')!.invalid">
+              Year should be between 1000 and {{ today.getFullYear() }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Description</mat-label>
+            <textarea matInput [ngStyle]="{'resize': viewMode ? 'none' : 'vertical' }" formControlName="description"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
     </form>
   </div>
 

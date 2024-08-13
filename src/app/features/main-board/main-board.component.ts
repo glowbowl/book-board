@@ -64,7 +64,7 @@ export class MainBoardComponent implements OnInit, OnDestroy {
 
   public openBookDialog(book?: IBook, viewMode: boolean = false): void {
     const dialogRef = this.dialog.open(BookDialogComponent, {
-      width: '500px',
+      width: '600px',
       data: { book: book, viewMode: viewMode },
       autoFocus: false,
     });

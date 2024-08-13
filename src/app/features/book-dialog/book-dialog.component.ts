@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
@@ -39,10 +40,12 @@ export class BookDialogComponent implements OnInit {
   public isEditMode: boolean;
   public viewMode: boolean;
   public today = new Date();
+  public imagePreview: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private api: BookApiService,
+    private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<BookDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { book: IBook; viewMode: boolean }
   ) {
@@ -51,6 +54,56 @@ export class BookDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initFormGroup();
+  }
+
+  public toggleEditMode(): void {
+    this.viewMode = false;
+    this.isEditMode = true;
+    if (this.data.book?.imageUrl) {
+      this.imagePreview = this.data.book.imageUrl;
+    }
+    this.bookForm.enable();
+  }
+
+  public onImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+        this.bookForm.patchValue({ imageUrl: this.imagePreview });
+        this.cdr.markForCheck();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  public deleteBook(): void {
+    this.dialogRef.close();
+    this.api.deleteBook(this.data.book.id);
+  }
+
+  public save(): void {
+    if (this.bookForm.valid && this.data.book) {
+      this.dialogRef.close({...this.bookForm.value, id: this.data.book.id});
+    } else {
+      this.dialogRef.close(this.bookForm.value);
+    }
+  }
+
+  public cancel(): void {
+    if (this.isEditMode && this.data.viewMode) {
+      this.isEditMode = false;
+      this.viewMode = true;
+      this.imagePreview = null;
+      this.bookForm.disable();
+    } else {
+      this.dialogRef.close();
+    }
+  }
+
+  private initFormGroup(): void {
     this.bookForm = this.fb.group({
       name: [
         { value: this.data.book?.name || '', disabled: this.viewMode },
@@ -74,36 +127,7 @@ export class BookDialogComponent implements OnInit {
       description: [
         { value: this.data.book?.description || '', disabled: this.viewMode },
       ],
+      imageUrl: [{ value: this.data.book?.imageUrl || '', disabled: this.viewMode }],
     });
-  }
-
-  public toggleEditMode(): void {
-    this.viewMode = false;
-    this.isEditMode = true;
-    this.bookForm.enable();
-  }
-
-  public deleteBook(): void {
-    this.dialogRef.close();
-    this.api.deleteBook(this.data.book.id);
-  }
-
-  public save(): void {
-    if (this.bookForm.valid && this.data.book) {
-      this.dialogRef.close({...this.bookForm.value, id: this.data.book.id});
-    } else {
-      this.dialogRef.close(this.bookForm.value);
-
-    }
-  }
-
-  public cancel(): void {
-    if (this.isEditMode && this.data.viewMode) {
-      this.isEditMode = false;
-      this.viewMode = true;
-      this.bookForm.disable();
-    } else {
-      this.dialogRef.close();
-    }
   }
 }
